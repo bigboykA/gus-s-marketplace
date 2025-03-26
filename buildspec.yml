@@ -7,8 +7,10 @@ phases:
   build:
     commands:
       - echo Building the Spring Boot app...
+      - cd backend/demo/demo
+      - chmod +x gradlew
       - ./gradlew build
 
 artifacts:
   files:
-    - build/libs/*.jar
+    - backend/demo/demo/build/libs/*.jar
