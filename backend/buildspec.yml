@@ -4,12 +4,12 @@ phases:
   install:
     runtime-versions:
       java: corretto17
-
   build:
     commands:
-      - echo "Building Spring Boot app..."
+      - echo Building the Spring Boot app...
       - ./gradlew build
 
 artifacts:
   files:
     - build/libs/*.jar
+
