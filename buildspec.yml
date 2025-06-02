@@ -4,13 +4,14 @@ phases:
   install:
     runtime-versions:
       java: corretto17
+    commands:
+      - echo Installing Maven...
+      - mvn install -DskipTests
   build:
     commands:
-      - echo Building the Spring Boot app...
-      - cd backend/demo/demo
-      - chmod +x gradlew
-      - ./gradlew build
-
+      - echo Building the project...
+      - mvn package -DskipTests
 artifacts:
   files:
-    - backend/demo/demo/build/libs/*.jar
+    - target/*.jar
+  base-directory: target
