@@ -1,17 +1,24 @@
 package com.springtutorial2.gusmarketplace;
 
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.net.URL;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
 public class GusService {
-
+    private final AmazonS3 s3Client;
     private final GusRepository gusRepository;
 
     public List<ListingDTO> getAllListings() {
@@ -37,14 +44,14 @@ public class GusService {
     }
 
 
-    public Listing createListing(Listing listing){
-        // Save the listing to the database
-        return gusRepository.save(listing);
+    public void createListing(Listing listing){
+
+        gusRepository.save(listing);
 
     }
 
     public List<ListingDTO> getListingsByCategory(String category) {
-        // Fetch listings by category from the repository
+
         List<Listing> listings = gusRepository.findListingByCategory(category);
 
         if (listings.isEmpty()) {
@@ -57,7 +64,6 @@ public class GusService {
     }
 
     public List<ListingDTO> getListingsByTitle(String title) {
-        // Fetch listings by title from the repository
         List<Listing> listings = gusRepository.findListingByTitle(title);
 
         if (listings.isEmpty()) {
@@ -70,8 +76,30 @@ public class GusService {
     }
 
     public void deleteListing(String id) {
-        // Delete the listing from the database
         gusRepository.deleteById(id);
+    }
+
+    public Map<String, String> generateUploadUrl(){
+        String bucketName = "gus-marketplace-listing-imgs";
+        String fileName = UUID.randomUUID().toString() + ".jpg";
+
+        GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, fileName)
+                .withMethod(com.amazonaws.HttpMethod.PUT)
+                .withExpiration(Date.from(Instant.now().plus(15, ChronoUnit.HOURS)))
+                .withContentType("image/jpeg");
+
+        // Add CORS headers to the request
+        request.addRequestParameter("x-amz-acl", "public-read");
+        request.addRequestParameter("x-amz-meta-cors-allowed-origin", "http://localhost:5173");
+
+
+        URL url = s3Client.generatePresignedUrl(request);
+
+        // Return the upload and file URLs
+        return Map.of(
+                "uploadUrl", url.toString(),
+                "fileUrl", "https://" + bucketName + ".s3.us-east-2.amazonaws.com/" + fileName
+            );
     }
 
 
