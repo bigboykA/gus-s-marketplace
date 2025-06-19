@@ -80,18 +80,13 @@ public class GusService {
     }
 
     public Map<String, String> generateUploadUrl(){
-        String bucketName = "gus-marketplace-listing-imgs";
+        String bucketName = "gus-market-listing-imgs";
         String fileName = UUID.randomUUID().toString() + ".jpg";
 
         GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, fileName)
                 .withMethod(com.amazonaws.HttpMethod.PUT)
                 .withExpiration(Date.from(Instant.now().plus(15, ChronoUnit.HOURS)))
                 .withContentType("image/jpeg");
-
-        // Add CORS headers to the request
-        request.addRequestParameter("x-amz-acl", "public-read");
-        request.addRequestParameter("x-amz-meta-cors-allowed-origin", "http://localhost:5173");
-
 
         URL url = s3Client.generatePresignedUrl(request);
 
