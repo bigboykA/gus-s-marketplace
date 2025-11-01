@@ -18,17 +18,19 @@ public class GusController {
     private final GusService gusService;
 
     @GetMapping
-    public List<ListingDTO> fetchAllListings() {
+    public List<Listing> fetchAllListings() {
         return gusService.getAllListings();
     }
 
+
     @GetMapping("/category")
-    public List<ListingDTO> fetchListingsByCategory(String category) {
-        return gusService.getListingsByCategory(category);
+    public List<Listing> fetchListingsByCategory(@RequestParam("categoryName") String categoryName) {
+        return gusService.getListingsByCategory(categoryName);
     }
+
     @GetMapping("/title")
-    public List<ListingDTO> fetchListingsByTitle(String title) {
-        return gusService.getListingsByTitle(title);
+    public List<Listing> fetchListingsByTitle(@RequestParam("titleName") String titleName) {
+        return gusService.getListingsByTitle(titleName);
     }
 
     @PostMapping("/create")

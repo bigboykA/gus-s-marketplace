@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 
 @AllArgsConstructor
 @Service
@@ -21,26 +21,9 @@ public class GusService {
     private final AmazonS3 s3Client;
     private final GusRepository gusRepository;
 
-    public List<ListingDTO> getAllListings() {
-        List<Listing> listings =  gusRepository.findAll();
+    public List<Listing> getAllListings() {
 
-        return listings.stream()
-                .map(this::convertToDTO) // Convert each Listing to ListingDTO
-                .collect(Collectors.toList());
-    }
-
-    private ListingDTO convertToDTO(Listing listing) {
-        ListingDTO dto = new ListingDTO();
-        dto.setId(listing.getId());
-        dto.setTitle(listing.getTitle());
-        dto.setImageUrl(listing.getImageUrl());
-        dto.setDescription(listing.getDescription());
-        dto.setPrice(listing.getPrice());
-        dto.setCondition(listing.getCondition());
-        dto.setGroupMeLink(listing.getGroupMeLink());
-        dto.setCategory(listing.getCategory());
-
-        return dto;
+        return gusRepository.findAll();
     }
 
 
@@ -50,7 +33,7 @@ public class GusService {
 
     }
 
-    public List<ListingDTO> getListingsByCategory(String category) {
+    public List<Listing> getListingsByCategory(String category) {
 
         List<Listing> listings = gusRepository.findListingByCategory(category);
 
@@ -58,21 +41,17 @@ public class GusService {
             throw new RuntimeException("No listings found for category: " + category);
         }
 
-        return listings.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return listings;
     }
 
-    public List<ListingDTO> getListingsByTitle(String title) {
+    public List<Listing> getListingsByTitle(String title) {
         List<Listing> listings = gusRepository.findListingByTitle(title);
 
         if (listings.isEmpty()) {
             throw new RuntimeException("No listings found for title: " + title);
         }
 
-        return listings.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return listings;
     }
 
     public void deleteListing(String id) {
