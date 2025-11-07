@@ -1,5 +1,6 @@
 package com.springtutorial2.gusmarketplace;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.stereotype.Service;
 
 import java.io.OutputStream;
@@ -13,10 +14,27 @@ import java.util.Scanner;
 @Service
 public class MailgunService {
     
-    private static final String MAILGUN_API_KEY = "ENV_VAR_PLACEHOLDER";
-    private static final String MAILGUN_DOMAIN = "gusmarketplace.com";
-    private static final String MAILGUN_BASE_URL = "https://api.mailgun.net/v3/" + MAILGUN_DOMAIN + "/messages";
-    private static final String FROM_EMAIL = "postmaster@" + MAILGUN_DOMAIN;
+    private final String MAILGUN_API_KEY;
+    private final String MAILGUN_DOMAIN;
+    private final String MAILGUN_BASE_URL;
+    private final String FROM_EMAIL;
+    
+    public MailgunService() {
+        try {
+            Dotenv dotenv = Dotenv.configure().load();
+            MAILGUN_API_KEY = dotenv.get("MAILGUN_API_KEY");
+            MAILGUN_DOMAIN = dotenv.get("MAILGUN_DOMAIN", "gusmarketplace.com");
+            
+            if (MAILGUN_API_KEY == null || MAILGUN_API_KEY.isEmpty()) {
+                throw new IllegalStateException("MAILGUN_API_KEY environment variable is not set. Please configure it in your .env file.");
+            }
+            
+            MAILGUN_BASE_URL = "https://api.mailgun.net/v3/" + MAILGUN_DOMAIN + "/messages";
+            FROM_EMAIL = "postmaster@" + MAILGUN_DOMAIN;
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to initialize MailgunService: " + e.getMessage(), e);
+        }
+    }
     
     public void sendContactEmail(String sellerEmail, String buyerEmail, String buyerName, 
                                  String listingTitle, String message) {
