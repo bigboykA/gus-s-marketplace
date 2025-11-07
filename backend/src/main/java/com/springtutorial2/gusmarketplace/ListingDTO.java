@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ListingDTO {
     private String id;
+    private String userId; 
     private String title;
     private String description;
     private String category;

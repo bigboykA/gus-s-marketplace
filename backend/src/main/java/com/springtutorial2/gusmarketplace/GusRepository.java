@@ -14,5 +14,6 @@ public interface GusRepository extends MongoRepository<Listing, String> {
 
     List<Listing> findListingByCategory(String category);
     List<Listing> findListingByTitle(String title);
+    List<Listing> findByUserId(String userId);
 
 }
