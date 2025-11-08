@@ -12,6 +12,8 @@ public class GusMarketplaceApplication {
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.configure().load();
         System.setProperty("MONGO_URI", dotenv.get("MONGO_URI"));
+        System.setProperty("AZURE_CONTENT_SAFETY_ENDPOINT", dotenv.get("AZURE_CONTENT_SAFETY_ENDPOINT", ""));
+        System.setProperty("AZURE_CONTENT_SAFETY_SUBSCRIPTION_KEY", dotenv.get("AZURE_CONTENT_SAFETY_SUBSCRIPTION_KEY", ""));
 
         SpringApplication.run(GusMarketplaceApplication.class, args);
     }
