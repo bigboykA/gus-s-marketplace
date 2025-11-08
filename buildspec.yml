@@ -6,12 +6,14 @@ phases:
       java: corretto17
     commands:
       - echo Installing Maven...
+      - cd backend
       - mvn install -DskipTests
   build:
     commands:
       - echo Building the project...
+      - cd backend
       - mvn package -DskipTests
 artifacts:
   files:
-    - target/*.jar
-  base-directory: target
+    - backend/target/*.jar
+  base-directory: backend/target
